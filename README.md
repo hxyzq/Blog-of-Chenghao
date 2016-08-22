@@ -1,2 +1,2 @@
 # Blog-of-Chenghao
-A simple Blog.
+A simple blog.
