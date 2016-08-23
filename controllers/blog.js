@@ -3,9 +3,22 @@
  */
 
 var validator = require('validator');
+var marked = require('marked');
 
 var models = require('../models');
 var Blog = models.Blog;
+
+marked.setOptions({
+	renderer: new marked.Renderer(),
+	gfm: true,
+	tables: true,
+	breaks: false,
+	pedantic: false,
+	sanitize: true,
+	smartLists: true,
+	smartypants: false
+});
+
 
 // show blog post page
 exports.showPost = function (req, res, next) {
@@ -26,8 +39,12 @@ exports.post = function (req, res, next) {
 	var title = validator.trim(req.body.title);
 	var content = validator.trim(req.body.content);
 	var tags = [];
+	var tag;
 	for (var i in req.body.tags) {
-		tags.push(validator.trim(req.body.tags[i]));
+		tag = validator.trim(req.body.tags[i]);
+		if (tag != '') {
+			tags.push(tag);
+		}
 	}
 
 	// 验证
@@ -48,16 +65,39 @@ exports.post = function (req, res, next) {
 	blog.content = content;
 	blog.user = req.session.user;
 	blog.tags = tags;
+
 	blog.save(function (err) {
 		if (err) {
-
 			req.flash('error', err);
 			return res.redirect('/post');
-
 		} else {
-
 			req.flash('success', '发表成功!');
 			return res.redirect('/');
+		}
+	});
+
+};
+
+// show blog content
+exports.showContent = function (req, res, next) {
+
+	console.log(req.params);
+	var id = req.params.id;
+
+	Blog.findById(id, function (err, blog) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		} else {
+
+			blog.content = marked(blog.content);
+			return res.render('blog/content', {
+				title: blog.title,
+				user: req.session.user ? req.session.user : null,
+				blog: blog,
+				success: req.flash('success').toString(),
+				error: req.flash('error').toString()
+			});
 
 		}
 	});

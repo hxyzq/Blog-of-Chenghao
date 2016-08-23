@@ -1,7 +1,7 @@
 <%- include layouts/header %>
 
 <% blogs.forEach(function (blog, index) { %>
-    <p><h2><a href="#"><%= blog.title %></a></h2></p>
+    <p><h2><a href="/blog/<%= blog._id %>"><%= blog.title %></a></h2></p>
     <p class="info">
         作者: <a href="#"><%= blog.user %></a> |
         日期: <%= blog.create_at %>

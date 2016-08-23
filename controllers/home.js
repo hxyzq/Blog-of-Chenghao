@@ -7,10 +7,11 @@ var config = require('../config');
 var models = require('../models');
 var Blog = models.Blog;
 
+
 // 博客首页
 exports.index = function (req, res, next) {
 
-	Blog.find({}, '', function (err, blogs) {
+	Blog.find({}, function (err, blogs) {
 		if (err) {
 			blogs = [];
 		} else {
