@@ -2,6 +2,7 @@
  * Created by wch on 16/8/23.
  */
 
+var config = require('../config');
 var validator = require('validator');
 var marked = require('marked');
 var EventProxy = require('eventproxy');
@@ -26,7 +27,7 @@ marked.setOptions({
 exports.showPost = function (req, res, next) {
 
 	res.render('post', {
-		title: '发表博客',
+		title: '发表博客' + ' · ' + config.blogName,
 		user: req.session.user,
 		success: req.flash('success').toString(),
 		error: req.flash('error').toString()
@@ -120,5 +121,31 @@ exports.showContent = function (req, res, next) {
 			});
 
 		});
+
+};
+
+// show blog archive page
+exports.archive = function (req, res, next) {
+
+	Blog.find(function (err, blogs) {
+		if (err) {
+			blogs = [];
+		} else {
+
+			blogs.forEach(function (blog, index) {
+				blog.year = blog.create_at.getFullYear();
+				blog.month = blog.create_at.getMonth() + 1;
+			});
+			return res.render('blog/archive', {
+				title: '归档' + ' · ' + config.blogName,
+				user: req.session.user ? req.session.user : null,
+				blogs: blogs,
+				success: req.flash('success').toString(),
+				error: req.flash('error').toString()
+			});
+
+		}
+	});
+
 
 };

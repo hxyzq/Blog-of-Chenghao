@@ -12,7 +12,7 @@ var Blog = models.Blog;
 exports.index = function (req, res, next) {
 
 	Blog
-		.find({})
+		.find()
 		.populate('tags')
 		.exec(function (err, blogs) {
 			if (err) {
@@ -20,7 +20,7 @@ exports.index = function (req, res, next) {
 			} else {
 
 				return res.render('index', {
-					title: '首页',
+					title: config.blogName,
 					user: req.session.user ? req.session.user : null,
 					blogs: blogs,
 					success: req.flash('success').toString(),
@@ -38,7 +38,7 @@ exports.index = function (req, res, next) {
 exports.showLogin = function (req, res, next) {
 
 	res.render('login', {
-		title: '登录',
+		title: '登录' + ' · ' + config.blogName,
 		user: req.session.user,
 		success: req.flash('success').toString(),
 		error: req.flash('error').toString()
