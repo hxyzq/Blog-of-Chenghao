@@ -1,7 +1,11 @@
-<%- include layouts/header %>
+<%- include ../layouts/header %>
+
+<% if (blogs.length > 0) { %>
+    <h2>共<%= blogs.length %>篇文章</h2>
+<% } %>
 
 <% blogs.forEach(function (blog, index) { %>
-    <p><h2><a href="/blog/<%= blog._id %>"><%= blog.title %></a></h2></p>
+<p><h2><a href="/blog/<%= blog._id %>"><%= blog.title %></a></h2></p>
     <p class="info">
         作者: <a href="#"><%= blog.user %></a> | <br />
         日期: <%= blog.create_at %> | <br />
@@ -10,7 +14,7 @@
             <a class="tag" href="/tags/<%= tag._id %>"><%= tag.name %></a>
         <% }) %>
     </p>
-    <p><%- blog.content %></p>
+<p><%- blog.content %></p>
 <% }) %>
 
-<%- include layouts/footer %>
+<%- include ../layouts/footer %>

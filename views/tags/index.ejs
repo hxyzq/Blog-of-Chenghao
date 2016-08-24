@@ -1,0 +1,7 @@
+<%- include ../layouts/header %>
+
+<% tags.forEach(function (tag, index) { %>
+    <a class="tag" href="/tags/<%= tag._id %>"><%= tag.name %></a>
+<% }) %>
+
+<%- include ../layouts/footer %>

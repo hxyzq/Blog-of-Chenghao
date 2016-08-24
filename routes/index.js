@@ -3,6 +3,7 @@ var router = express.Router();
 
 var home = require('../controllers/home');
 var blog = require('../controllers/blog');
+var tag = require('../controllers/tag');
 
 router.get('/', home.index);  // 首页
 router.get('/index', home.index);
@@ -15,6 +16,9 @@ router.get('/post', home.checkLogin, blog.showPost);    // 博客发表页
 router.post('/post', home.checkLogin, blog.post);       // 发表博客
 
 router.get('/blog/:id', blog.showContent);   // 博客内容页面
+
+router.get('/tags', tag.showTags);    // 标签页面
+router.get('/tags/:id', tag.showBlogs);   // 特定标签博客页面
 
 
 module.exports = router;

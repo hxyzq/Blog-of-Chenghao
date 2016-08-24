@@ -5,13 +5,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var Tag = require('./index').Tag;
+
 var BlogSchema = new Schema({
 	title: String,
 	content: String,
 	user: String,
 	create_at: { type: Date, default: Date.now },
 	update_at: { type: Date, default: Date.now },
-	tags: [ String ]
+	tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }]
 });
 
 BlogSchema.index({ create_at: -1 });

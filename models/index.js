@@ -14,7 +14,8 @@ mongoose.connect(config.db, {
 });
 
 require('./blog');
-
+require('./tag');
 
 
 exports.Blog = mongoose.model('Blog');
+exports.Tag = mongoose.model('Tag');

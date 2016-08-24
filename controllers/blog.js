@@ -4,9 +4,11 @@
 
 var validator = require('validator');
 var marked = require('marked');
+var EventProxy = require('eventproxy');
 
 var models = require('../models');
 var Blog = models.Blog;
+var Tag = models.Tag;
 
 marked.setOptions({
 	renderer: new marked.Renderer(),
@@ -34,7 +36,6 @@ exports.showPost = function (req, res, next) {
 
 // post a blog
 exports.post = function (req, res, next) {
-	console.log(req.body);
 
 	var title = validator.trim(req.body.title);
 	var content = validator.trim(req.body.content);
@@ -42,7 +43,7 @@ exports.post = function (req, res, next) {
 	var tag;
 	for (var i in req.body.tags) {
 		tag = validator.trim(req.body.tags[i]);
-		if (tag != '') {
+		if (tag !== '') {
 			tags.push(tag);
 		}
 	}
@@ -54,41 +55,60 @@ exports.post = function (req, res, next) {
 	} else if (content === '') {
 		error = '内容不可为空!';
 	}
-
 	if (error) {
 		req.flash('error', error);
 		return res.redirect('/post');
 	}
 
-	var blog = new Blog();
-	blog.title = title;
-	blog.content = content;
-	blog.user = req.session.user;
-	blog.tags = tags;
+	// 标签处理
+	var ep = new EventProxy();
+	ep.after('save_tags', tags.length, function (tagList) {
 
-	blog.save(function (err) {
-		if (err) {
-			req.flash('error', err);
-			return res.redirect('/post');
-		} else {
-			req.flash('success', '发表成功!');
-			return res.redirect('/');
-		}
+		// 保存博客
+		var blog = new Blog();
+		blog.title = title;
+		blog.content = content;
+		blog.user = req.session.user;
+		blog.tags = tagList;
+
+		blog.save(function (err) {
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/post');
+			} else {
+				req.flash('success', '发表成功!');
+				return res.redirect('/');
+			}
+		});
+
 	});
+	ep.fail(function (err) {
+		req.flash('error', err);
+		return res.redirect('/post');
+	});
+
+	for (var i = 0; i < tags.length; i++) {
+		var conditions = {'name': tags[i]};
+		var update = {'$inc': {'blog_count': 1}};
+		var options = {new: true, upsert: true};
+		Tag.findOneAndUpdate(conditions, update, options, ep.done('save_tags'));
+	}
 
 };
 
 // show blog content
 exports.showContent = function (req, res, next) {
 
-	console.log(req.params);
-	var id = req.params.id;
-
-	Blog.findById(id, function (err, blog) {
-		if (err) {
-			req.flash('error', err);
-			return res.redirect('/');
-		} else {
+	// var id = req.params.id;
+	console.log(req.params.id);
+	Blog
+		.findOne({ '_id': req.params.id })
+		.populate('tags')
+		.exec(function (err, blog) {
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/');
+			}
 
 			blog.content = marked(blog.content);
 			return res.render('blog/content', {
@@ -99,7 +119,6 @@ exports.showContent = function (req, res, next) {
 				error: req.flash('error').toString()
 			});
 
-		}
-	});
+		});
 
 };
