@@ -8,6 +8,7 @@
     <title><%= title %></title>
 
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="http://cdn.staticfile.org/jquery/2.2.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -16,10 +17,12 @@
 </header>
 
 <nav>
-    <span><a title="主页" href="/">home</a></span>
+    <span><a title="博客" href="/blog">blog</a></span>
     <span><a title="归档" href="/archive">archive</a></span>
     <span><a title="标签" href="/tags">tags</a></span>
     <span><a title="友情链接" href="/links">links</a></span>
+    <span><a title="关于" href="/about">about</a></span>
+    <hr />
     <% if (user) { %>
         <span><a title="发表" href="/post">post</a></span>
         <span><a title="登出" href="/logout">logout</a></span>

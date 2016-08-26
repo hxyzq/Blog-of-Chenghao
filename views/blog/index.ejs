@@ -1,0 +1,18 @@
+<%- include ../layouts/header %>
+
+<% blogs.forEach(function (blog, index) { %>
+<p><h2><a href="/blog/<%= blog._id %>"><%= blog.title %></a></h2></p>
+<p class="info">
+    作者: <a href="#"><%= blog.user %></a> | <br />
+    日期: <%= blog.create_at %> | <br />
+    标签：
+    <% blog.tags.forEach(function (tag, index) { %>
+    <a class="tag" href="/tags/<%= tag._id %>"><%= tag.name %></a>
+    <% }) %>
+</p>
+<p><%- blog.content %></p>
+<% }) %>
+
+<button class="load_more_btn" data-loading-text="loading" data-page="1">More</button>
+
+<%- include ../layouts/footer %>

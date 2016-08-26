@@ -6,6 +6,8 @@ var config = require('../config');
 var validator = require('validator');
 var marked = require('marked');
 var EventProxy = require('eventproxy');
+var ejs = require('ejs');
+var fs = require('fs');
 
 var models = require('../models');
 var Blog = models.Blog;
@@ -97,11 +99,77 @@ exports.post = function (req, res, next) {
 
 };
 
+// show blog list
+exports.index = function (req, res, next) {
+
+	Blog
+		.find()
+		.populate('tags')
+		.limit(config.blogListSize)
+		.sort({ 'create_at': -1 })
+		.exec(function (err, blogs) {
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/');
+			} else {
+
+				return res.render('blog/index', {
+					title: config.blogName,
+					user: req.session.user ? req.session.user : null,
+					blogs: blogs,
+					success: req.flash('success').toString(),
+					error: req.flash('error').toString()
+				});
+
+			}
+		});
+
+};
+
+// load more blog list
+exports.loadMore = function (req, res, next) {
+	console.log(req.body);
+
+	var page = parseInt(req.body.page);
+	var blogListSize = config.blogListSize;
+
+	var ep = EventProxy();
+	ep.all('tpl', 'blogs', 'count', function (tpl, blogs, count) {
+
+		console.log(arguments);
+		var html = ejs.render(tpl, {
+			blogs: blogs,
+			isLastPage: (page * blogListSize + blogs.length) === count,
+			page: page + 1
+		});
+		return res.json({
+			html: html
+		});
+
+	});
+
+	ep.fail(function (err) {
+		req.flash('error', err);
+		return res.redirect('/');
+	});
+
+	fs.readFile('./views/blog/_blog_list.ejs', 'utf-8', ep.done('tpl'));
+	Blog
+		.find()
+		.populate('tags')
+		.limit(blogListSize)
+		.skip(page * blogListSize)
+		.sort({ 'create_at': -1 })
+		.exec(ep.done('blogs'));
+	Blog
+		.count()
+		.exec(ep.done('count'));
+
+};
+
 // show blog content
 exports.showContent = function (req, res, next) {
 
-	// var id = req.params.id;
-	console.log(req.params.id);
 	Blog
 		.findOne({ '_id': req.params.id })
 		.populate('tags')
@@ -113,7 +181,7 @@ exports.showContent = function (req, res, next) {
 
 			blog.content = marked(blog.content);
 			return res.render('blog/content', {
-				title: blog.title,
+				title: blog.title + ' · ' + config.blogName,
 				user: req.session.user ? req.session.user : null,
 				blog: blog,
 				success: req.flash('success').toString(),

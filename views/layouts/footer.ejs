@@ -1,3 +1,16 @@
 </article>
+
+<script>
+
+$('article').delegate('.load_more_btn', 'click', function () {
+    var page = this.dataset.page;
+    this.remove();
+    $.post('/blog/loadMore', { page: page }, function (data) {
+        $('article').append(data.html);
+    }, 'json');
+});
+
+</script>
+
 </body>
 </html>
