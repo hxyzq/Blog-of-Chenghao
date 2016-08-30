@@ -11,24 +11,26 @@ var Blog = models.Blog;
 // 博客首页
 exports.index = function (req, res, next) {
 
-	Blog
-		.find()
-		.populate('tags')
-		.exec(function (err, blogs) {
-			if (err) {
-				blogs = [];
-			} else {
+	return res.render('index');
 
-				return res.render('index', {
-					title: config.blogName,
-					user: req.session.user ? req.session.user : null,
-					blogs: blogs,
-					success: req.flash('success').toString(),
-					error: req.flash('error').toString()
-				});
-
-			}
-		});
+	// Blog
+	// 	.find()
+	// 	.populate('tags')
+	// 	.exec(function (err, blogs) {
+	// 		if (err) {
+	// 			blogs = [];
+	// 		} else {
+	//
+	// 			return res.render('index', {
+	// 				title: config.blogName,
+	// 				user: req.session.user ? req.session.user : null,
+	// 				blogs: blogs,
+	// 				success: req.flash('success').toString(),
+	// 				error: req.flash('error').toString()
+	// 			});
+	//
+	// 		}
+	// 	});
 
 };
 

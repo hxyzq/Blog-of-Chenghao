@@ -1,16 +1,69 @@
-<%- include layouts/header %>
+<!doctype html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-<% blogs.forEach(function (blog, index) { %>
-    <p><h2><a href="/blog/<%= blog._id %>"><%= blog.title %></a></h2></p>
-    <p class="info">
-        作者: <a href="#"><%= blog.user %></a> | <br />
-        日期: <%= blog.create_at %> | <br />
-        标签：
-        <% blog.tags.forEach(function (tag, index) { %>
-            <a class="tag" href="/tags/<%= tag._id %>"><%= tag.name %></a>
-        <% }) %>
-    </p>
-    <p><%- blog.content %></p>
-<% }) %>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.css">
+	<link rel="stylesheet" href="/stylesheets/cover.css">
 
-<%- include layouts/footer %>
+	<style>
+		.background-image {
+			background-image: url('http://ocd6twpd6.bkt.clouddn.com/2016083073141photo-1428954376791-d9ae785dfb2d.jpeg');
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+	</style>
+
+	<title>成浩的个人网站</title>
+</head>
+<body>
+<div class="site-wrapper background-image">
+
+	<div class="site-wrapper-inner">
+
+		<div class="cover-container">
+
+			<div class="masthead clearfix">
+				<div class="inner">
+					<h3 class="masthead-brand">Blog of Chenghao</h3>
+					<nav class="nav nav-masthead">
+						<a class="nav-link active" href="#">Home</a>
+						<a class="nav-link" href="/blog">Blog</a>
+						<a class="nav-link" href="/about">About</a>
+					</nav>
+				</div>
+			</div>
+
+			<div class="inner cover">
+				<h1 class="cover-heading">从自己开始</h1>
+				<p class="lead">你是什么样的人，就会遇到什么样的人。你想遇到什么样的人，就得先让自己成为那样的人。</p>
+				<p class="lead">
+					<a href="/blog" class="btn btn-lg btn-secondary">See more</a>
+				</p>
+			</div>
+
+			<div class="mastfoot">
+				<div class="inner">
+					<p>Power By<a href="http://www.nodejs.org/"> Node.js</a>, Host By <a href="#">DigitalOcean</a>.</p>
+					<p>2016, Chenghao.me &copy; by <a href="#">Chenghao</a></p>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+
+<!-- JQuery -->
+<script src="http://cdn.staticfile.org/jquery/2.2.1/jquery.min.js"></script>
+<!--Bootstrap JS-->
+<script src="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.js"></script>
+</body>
+</html>

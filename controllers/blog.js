@@ -197,7 +197,8 @@ exports.archive = function (req, res, next) {
 
 	Blog.find(function (err, blogs) {
 		if (err) {
-			blogs = [];
+			req.flash('error', err);
+			return res.redirect('/');
 		} else {
 
 			blogs.forEach(function (blog, index) {
